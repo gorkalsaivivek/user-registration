@@ -1,0 +1,40 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: user-registration
+spec:
+  selector:
+    app: user-registration
+  ports:
+    - protocol: TCP
+      port: 8080
+      #nodePort: 30084
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-registration
+spec:
+  selector:
+    matchLabels:
+      app: user-registration
+  replicas: 2
+  minReadySeconds: 45
+  selector:
+    matchLabels:
+      app: user-registration
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: user-registration
+    spec:
+      containers:
+        - name: user-registration
+          image: 7039402000/user-registration:latest
+          imagePullPolicy: Always
